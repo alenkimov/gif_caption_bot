@@ -1,0 +1,6 @@
+venv
+.venv
+.idea
+
+.temp
+log
