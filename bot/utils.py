@@ -1,24 +1,8 @@
 import os
-from io import BytesIO
 from contextlib import contextmanager
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
 from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
-
-
-@contextmanager
-def watermarked_photo(photo: BytesIO, watermark_text: str) -> BytesIO:
-    """
-    Добавляет текст на изображение.
-    """
-    image = Image.open(photo)
-    font = ImageFont.truetype("arial.ttf", 50)
-    drawer = ImageDraw.Draw(image)
-    drawer.text((50, 100), watermark_text, font=font, fill='black')
-    with BytesIO() as output:
-        image.save(output, format="JPEG")
-        yield output
 
 
 @contextmanager
