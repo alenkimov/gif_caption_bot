@@ -1,5 +1,4 @@
 from pydantic import BaseSettings
-from moviepy import config_defaults as moviepy_config_defaults
 
 from bot.definitions import DOT_ENV_FILEPATH
 
@@ -14,4 +13,3 @@ class Settings(BaseSettings):
 
 
 config = Settings()
-moviepy_config_defaults.IMAGEMAGICK_BINARY = config.IMAGEMAGICK_BINARY
