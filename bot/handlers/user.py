@@ -11,11 +11,16 @@ from bot.definitions import TEMP_DIR
 router = Router()
 
 
+HELP_MESSAGE_TEXT = """
+Отправь мне гифку и я добавлю на нее твое имя пользователя!
+Или отправь мне гифку с подписью и я добавлю на нее подпись!
+Отредактируй подпись и я отправлю тебе новую гифку!
+"""
+
+
 @router.message(Command('help'))
 async def cmd_help(message: Message):
-    await message.answer(f'Отправь мне гифку и я добавлю на нее твое имя пользователя!\n'
-                         f'Или отправь мне гифку с подписью!\n'
-                         f'Измени подпись у гифки и я отправлю тебе новую!')
+    await message.answer(HELP_MESSAGE_TEXT)
 
 
 @router.message(F.animation)
