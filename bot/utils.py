@@ -1,7 +1,6 @@
 import os
 from contextlib import contextmanager
 from pathlib import Path
-from pprint import pprint
 
 from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
 
@@ -17,8 +16,6 @@ def watermarked_mp4(path: Path, watermark_text: str) -> Path:
 
     # Сборка текста-вотермарки
     fontsize = mp4.w // 10
-    logger.warning(f'mp4.w: {mp4.w}')
-    logger.warning(f'fontsize: {fontsize}')
 
     # Перенос строк для длинного текста
     watermark_text_parts = watermark_text.split()
@@ -39,8 +36,9 @@ def watermarked_mp4(path: Path, watermark_text: str) -> Path:
     }
     if fontsize > 30:  # Текст будет без обводки, если размер шрифта слишком маленький
         text_clip_params.update({'stroke_color': 'black', 'stroke_width': fontsize // 20})
-    pprint(text_clip_params)
     watermark = TextClip(**text_clip_params).set_position('bottom').set_duration(mp4.duration)
+
+    logger.info(text_clip_params)
 
     # Сохранение видео по пути output_video_path
     CompositeVideoClip([mp4, watermark]).write_videofile(output_video_path.as_posix())
