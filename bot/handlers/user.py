@@ -18,7 +18,7 @@ HELP_MESSAGE_TEXT = """
 """
 
 
-@router.message(Command('help'))
+@router.message(Command('help', 'start'))
 async def cmd_help(message: Message):
     await message.answer(HELP_MESSAGE_TEXT)
 
