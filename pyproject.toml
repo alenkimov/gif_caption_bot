@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "watermark-bot"
+name = "gif-caption-bot"
 version = "0.1.0"
-description = "Telegram bot to add a watermark to a gif or photo."
+description = "Telegram bot to add a caption to a gif."
 authors = ["Alen <alen.kimov@gmail.com>"]
 readme = "README.md"
-packages = [{include = "watermark_bot"}]
+packages = [{include = "gif_caption_bot"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
