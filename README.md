@@ -11,5 +11,5 @@
 5. В папке проекта пропишите следующие команды:
 ```bash
 poetry update
-poetry run python bot\app.py
+poetry run python -m bot
 ```

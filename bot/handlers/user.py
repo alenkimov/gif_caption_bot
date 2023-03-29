@@ -5,8 +5,8 @@ from aiogram import F, Router, Bot
 from aiogram.filters import Command
 from aiogram.types import Message, FSInputFile
 
-from utils import watermarked_mp4
-from definitions import TEMP_DIR
+from bot.utils import watermarked_mp4
+from bot.definitions import TEMP_DIR
 
 router = Router()
 

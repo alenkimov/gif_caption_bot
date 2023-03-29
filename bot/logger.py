@@ -5,7 +5,7 @@ import sys
 
 from loguru import logger
 
-from definitions import LOG_DIR
+from bot.definitions import LOG_DIR
 
 
 DEBUG = True

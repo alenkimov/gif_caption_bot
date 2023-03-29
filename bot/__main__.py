@@ -2,10 +2,10 @@ import asyncio
 
 from aiogram import Bot, Dispatcher
 
-from logger import logger
-from config import config
-from handlers import user
-from ui_commands import set_ui_commands
+from bot.logger import logger
+from bot.config import config
+from bot.handlers import user
+from bot.ui_commands import set_ui_commands
 
 
 async def main():
