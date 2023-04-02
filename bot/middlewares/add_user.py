@@ -15,6 +15,8 @@ class AddUserMiddleware(BaseMiddleware):
     Если пользователя не существует — создает его.
     Если существует — обновляет его данные (имя пользователя, имя и фамилию).
     Пробрасывает пользователя в хендлер, чтобы не приходилось его заново запрашивать.
+
+    Так как использует сессию базы данных, должен использоваться после DbSessionMiddleware.
     """
     async def __call__(
         self,
@@ -23,21 +25,10 @@ class AddUserMiddleware(BaseMiddleware):
         data: dict[str, Any],
     ) -> Any:
         session: AsyncSession = data['session']
-        telegram_id = event.from_user.id
-        username = event.from_user.username
-        first_name = event.from_user.first_name
-        last_name = event.from_user.last_name
-        user = await session.scalar(select(User).filter_by(telegram_id=telegram_id))
-        if user is None:
-            user = User(telegram_id=telegram_id,
-                        username=username,
-                        first_name=first_name,
-                        last_name=last_name)
-            session.add(user)
-        else:
-            user.username = username
-            user.first_name = first_name
-            user.last_name = last_name
-        await session.commit()
+        user = User(telegram_id=event.from_user.id,
+                    username=event.from_user.username,
+                    first_name=event.from_user.first_name,
+                    last_name=event.from_user.last_name)
+        user = await session.merge(user)
         data['user'] = user
         return await handler(event, data)
