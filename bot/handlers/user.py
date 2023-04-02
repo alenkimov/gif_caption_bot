@@ -1,38 +1,161 @@
+from datetime import datetime, timedelta
 import secrets
 import os
 
 from aiogram import F, Router, Bot
 from aiogram.filters import Command
-from aiogram.types import Message, FSInputFile, Update
+from aiogram.types import Message, FSInputFile
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.utils import watermarked_mp4
+from bot.config import DELAY, ALL_FONTS_LOWER, ALL_COLORS
+from bot.utils import captioned_mp4
 from bot.definitions import TEMP_DIR
+from bot.middlewares import AddUserMiddleware
+from bot.models import User
+from bot.handlers.message_texts import START_MESSAGE_TEXT, HELP_MESSAGE_TEXT
 
 router = Router()
+router.message.middleware(AddUserMiddleware())
+router.edited_message.middleware(AddUserMiddleware())
 
 
-HELP_MESSAGE_TEXT = """
-Отправь мне гифку и я добавлю на нее твое имя пользователя!
-Или отправь мне гифку с подписью и я добавлю на нее подпись!
-Отредактируй подпись и я отправлю тебе новую гифку!
-"""
+@router.message(Command('start'))
+async def cmd_start(message: Message):
+    await message.answer(START_MESSAGE_TEXT, disable_web_page_preview=True)
 
 
-@router.message(Command('help', 'start'))
+@router.message(Command('help'))
 async def cmd_help(message: Message):
-    await message.answer(HELP_MESSAGE_TEXT)
+    await message.answer(HELP_MESSAGE_TEXT, disable_web_page_preview=True)
+
+
+@router.message(Command('me', 'my'))
+async def cmd_me(message: Message, user: User):
+    await message.answer(user.get_info())
+
+
+@router.message(Command('settings', 'setting'))
+async def cmd_settings(message: Message, user: User):
+    await message.answer(user.get_settings_info())
+
+
+@router.message(Command('leaderboard', 'board'))
+async def cmd_leaderboard(message: Message, user: User, session: AsyncSession):
+    await message.answer(await user.async_get_leaderboard_info(session))
+
+
+@router.message(Command('font', 'fonts', magic=~F.args))
+async def cmd_font(message: Message, user: User):
+    await message.answer(user.get_fonts())
+
+
+@router.message(Command('font', 'fonts', magic=F.args.cast(int).as_('font_size')))
+async def cmd_font_size(message: Message, user: User, session: AsyncSession, font_size: int):
+    if font_size > 100 or font_size < 1:
+        await message.reply(f'Размер шрифта должен быть в пределах от 1% до 100%')
+    else:
+        user.font_size = font_size
+        await session.commit()
+        await message.reply(f'Размер шрифта установлен')
+
+
+@router.message(Command('font', 'fonts', magic=F.args.cast(str).as_('font')))
+async def cmd_font_name(message: Message, user: User, session: AsyncSession, font: str):
+    if font.lower() not in ALL_FONTS_LOWER:
+        await message.reply(f'Шрифт не найден. Доступные шрифты: /font')
+    else:
+        user.font = font
+        await session.commit()
+        await message.reply(f'Шрифт установлен')
+
+
+@router.message(Command('font_color', magic=F.args.cast(str).as_('color')))
+async def cmd_font_color(message: Message, user: User, session: AsyncSession, color: str):
+    if color.lower() not in ALL_COLORS:
+        await message.reply(f'Цвет не найден. Доступные цвета: {ALL_COLORS}')
+    else:
+        user.font_color = color
+        await session.commit()
+        await message.reply(f'Цвет шрифта установлен')
+
+
+@router.message(Command('stroke'))
+async def cmd_stroke(message: Message, user: User, session: AsyncSession):
+    if user.stroke:
+        user.stroke = False
+        await message.reply(f'Обводка выключена')
+    else:
+        user.stroke = True
+        await message.reply(f'Обводка включена\nЦвет обводки: {user.stroke_color}')
+    await session.commit()
+
+
+@router.message(Command('stroke_color', magic=F.args.cast(str).as_('color')))
+async def cmd_stroke_color(message: Message, user: User, session: AsyncSession, color: str):
+    if color.lower() not in ALL_COLORS:
+        await message.reply(f'Цвет не найден. Доступные цвета: {ALL_COLORS}')
+    else:
+        user.stroke_color = color
+        await session.commit()
+        await message.reply(f'Цвет обводки установлен')
+
+
+@router.message(Command('position'))
+async def cmd_position(message: Message, user: User, session: AsyncSession):
+    if user.position == 'bottom':
+        user.position = 'up'
+    else:
+        user.position = 'bottom'
+    await session.commit()
+    await message.reply(f'Позиция текста установлена: {user.position}')
+
+
+@router.message(Command('transition'))
+async def cmd_transition(message: Message, user: User, session: AsyncSession):
+    if user.transition:
+        user.transition = False
+        await message.reply(f'Перенос текста выключен')
+    else:
+        user.transition = True
+        await message.reply(f'Перенос текста включен')
+    await session.commit()
 
 
 @router.message(F.animation)
-@router.edited_message(F.animation)
-async def photo_handler(message: Message, bot: Bot):
-    telegram_handle = f'@{message.from_user.username}'
-    mp4_filepath = TEMP_DIR / f'{telegram_handle}-{secrets.token_urlsafe(8)}.mp4'
-    await bot.download(message.animation, destination=mp4_filepath)
-    if message.caption:
-        watermark = message.caption
+async def animation_handler(message: Message, user: User, session: AsyncSession):
+    user.animation_file_id = message.animation.file_id
+    await session.commit()
+
+
+@router.message(F.text)
+@router.edited_message(F.text)
+async def text_handler(message: Message, user: User, session: AsyncSession, bot: Bot):
+    """
+    Скачивает последнюю отправленную пользователем гифку и добавляет на нее текст этого сообщения.
+
+    Подпись на гифку можно добавлять не чаще определенного времени (bot.config.DELAY).
+    """
+    now = datetime.utcnow()
+    delta = timedelta(seconds=DELAY)
+    delay_ago = now - delta
+    if user.last_gif_created_at is not None and user.last_gif_created_at > delay_ago:
+        seconds_left = ((user.last_gif_created_at + delta) - now).seconds
+        await message.reply(f'Wait {seconds_left} seconds!')
     else:
-        watermark = telegram_handle
-    with watermarked_mp4(mp4_filepath, watermark) as watermarked_mp4_filename:
-        await message.reply_animation(FSInputFile(watermarked_mp4_filename))
-    os.remove(mp4_filepath)
+        user.last_gif_created_at = now
+        user.count_of_creations += 1
+        await session.commit()
+        mp4_filepath = TEMP_DIR / f'{user.username}-{secrets.token_urlsafe(8)}.mp4'
+        await bot.download(user.animation_file_id, destination=mp4_filepath)
+        kwargs = {
+            'font': user.font,
+            'font_size': user.font_size,
+            'font_color': user.font_color,
+            'stroke': user.stroke,
+            'stroke_color': user.stroke_color,
+            'position': user.position,
+            'transition': user.transition,
+        }
+        with captioned_mp4(mp4_filepath, message.text, **kwargs) as watermarked_mp4_filename:
+            await message.reply_animation(FSInputFile(watermarked_mp4_filename))
+        os.remove(mp4_filepath)

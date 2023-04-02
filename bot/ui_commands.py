@@ -9,6 +9,15 @@ async def set_ui_commands(bot: Bot):
     """
     commands = [
         BotCommand(command="help", description="Помощь"),
+        BotCommand(command="me", description="Обо мне"),
+        BotCommand(command="settings", description="Установленные настройки"),
+        BotCommand(command="leaderboard", description="Таблица лидеров"),
+        BotCommand(command="font", description="Список доступных шрифтов, установка шрифта и его размера"),
+        BotCommand(command="font_color", description="Установка цвета шрифта."),
+        BotCommand(command="position", description="Смена позиции текста"),
+        BotCommand(command="stroke", description="Вкл/Выкл обводку."),
+        BotCommand(command="stroke_color", description="Установка цвета обводки."),
+        BotCommand(command="transition", description="Вкл/Выкл перенос текста на новую строку"),
     ]
     await bot.set_my_commands(
         commands=commands,
