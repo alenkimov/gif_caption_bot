@@ -113,7 +113,7 @@ async def cmd_position(message: Message, user: User, session: AsyncSession, posi
         await message.reply(f'Позиция текста установлена')
 
 
-async def create_gif_and_answer(message: Message, user: User, session: AsyncSession, bot: Bot):
+async def create_gif_and_answer(message: Message, user: User, bot: Bot):
     """
     Скачивает последнюю отправленную пользователем гифку и добавляет на нее текст этого сообщения.
 
@@ -130,7 +130,6 @@ async def create_gif_and_answer(message: Message, user: User, session: AsyncSess
     else:
         user.last_gif_created_at = now
         user.count_of_creations += 1
-        await session.commit()
         mp4_filepath = TEMP_DIR / f'{user.username}-{secrets.token_urlsafe(8)}.mp4'
         await bot.download(user.animation_file_id, destination=mp4_filepath)
         kwargs = {
@@ -150,7 +149,8 @@ async def create_gif_and_answer(message: Message, user: User, session: AsyncSess
 async def cmd_repeat(message: Message, user: User, session: AsyncSession, bot: Bot):
     if user.last_caption is None:
         return
-    await create_gif_and_answer(message, user, session, bot)
+    await create_gif_and_answer(message, user, bot)
+    await session.commit()
 
 
 @router.message(F.animation)
@@ -163,4 +163,5 @@ async def animation_handler(message: Message, user: User, session: AsyncSession)
 @router.edited_message(F.text)
 async def text_handler(message: Message, user: User, session: AsyncSession, bot: Bot):
     user.last_caption = message.text
-    await create_gif_and_answer(message, user, session, bot)
+    await create_gif_and_answer(message, user, bot)
+    await session.commit()
