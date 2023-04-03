@@ -25,12 +25,11 @@ class User(Base):
     last_gif_created_at: Mapped[datetime | None]
     count_of_creations: Mapped[int] = mapped_column(default=0)
     font: Mapped[str] = mapped_column(String(120), default=DEFAULT_FONT)
-    font_size: Mapped[int] = mapped_column(SmallInteger, default=10)
+    font_size: Mapped[int] = mapped_column(SmallInteger, default=36)
     font_color: Mapped[str] = mapped_column(String(60), default='white')
     stroke: Mapped[bool] = mapped_column(default=True)
     stroke_color: Mapped[str] = mapped_column(default='black')
     position: Mapped[str] = mapped_column(default='bottom')
-    transition: Mapped[bool] = mapped_column(default=True)
 
     def __repr__(self):
         if self.username: return f'<User(telegram_id={self.telegram_id}, username={self.username}>'
@@ -78,21 +77,18 @@ class User(Base):
         #     ┏━ Цвет шрифта
         #     ┃      ┏━ Размер шрифта
         #     ┃      ┃   ┏━ Шрифт
-        font: white, 10% [ Calibri ]
+        Шрифт: white, 10% [ Calibri ]
         #       ┏━ Цвет обводки (если обводка включена)
-        stroke: black
+        Обводка: black
         #          ┏━ Позиция
-        postition: bottom
-        #           ┏━ Перенос текста на новую строку
-        transition: false
+        Позиция: bottom
         ```
         """
         parts = [html.bold('Settings\n')]
-        parts.append(f'font: {self.font_color}, {self.font_size}% [ {self.font} ]')
+        parts.append(f'Шрифт: {self.font_color}, {self.font_size} [ {self.font} ]')
         if self.stroke:
-            parts.append(f'stroke: {self.stroke_color}')
-        parts.append(f'postition: {self.position}')
-        parts.append(f'transition: {self.transition}')
+            parts.append(f'Обводка: {self.stroke_color}')
+        parts.append(f'Позиция: {self.position}')
         return '\n'.join(parts)
 
     async def async_get_leaderboard_info(self, session: AsyncSession):

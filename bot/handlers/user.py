@@ -113,17 +113,6 @@ async def cmd_position(message: Message, user: User, session: AsyncSession, posi
         await message.reply(f'Позиция текста установлена')
 
 
-@router.message(Command('transition'))
-async def cmd_transition(message: Message, user: User, session: AsyncSession):
-    if user.transition:
-        user.transition = False
-        await message.reply(f'Перенос текста выключен')
-    else:
-        user.transition = True
-        await message.reply(f'Перенос текста включен')
-    await session.commit()
-
-
 @router.message(F.animation)
 async def animation_handler(message: Message, user: User, session: AsyncSession):
     user.animation_file_id = message.animation.file_id
@@ -157,7 +146,6 @@ async def text_handler(message: Message, user: User, session: AsyncSession, bot:
             'stroke': user.stroke,
             'stroke_color': user.stroke_color,
             'position': user.position,
-            'transition': user.transition,
         }
         with captioned_mp4(mp4_filepath, message.text, **kwargs) as watermarked_mp4_filename:
             await message.reply_animation(FSInputFile(watermarked_mp4_filename))

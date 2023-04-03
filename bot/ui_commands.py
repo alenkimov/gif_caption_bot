@@ -17,7 +17,6 @@ async def set_ui_commands(bot: Bot):
         BotCommand(command="position", description="Установка позиции текста"),
         BotCommand(command="stroke", description="Вкл/Выкл обводку."),
         BotCommand(command="stroke_color", description="Установка цвета обводки."),
-        BotCommand(command="transition", description="Вкл/Выкл перенос текста на новую строку"),
     ]
     await bot.set_my_commands(
         commands=commands,
