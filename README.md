@@ -44,25 +44,29 @@ git --version
 ```xml
 <!-- <policy domain="path" rights="none" pattern="@*" /> -->
 ```
-3. Установите Python 3.11:
+3. Установите шрифты:
+```bash
+sudo apt install ttf-mscorefonts-installer
+```
+4. Установите Python 3.11:
 ```bash
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt install python3.11 -y
 ln -s /usr/bin/python3.11 /usr/bin/python
 python --version
 ```
-4. Установите [Poetry](https://python-poetry.org/docs/):
+5. Установите [Poetry](https://python-poetry.org/docs/):
 ```bash
 curl -sSL https://install.python-poetry.org | python -
 export PATH="/root/.local/bin:$PATH"
 poetry --version
 ```
-5. Склонируйте этот репозиторий, после чего перейдите в него:
+6. Склонируйте этот репозиторий, после чего перейдите в него:
 ```bash
 git clone https://github.com/AlenKimov/gif_caption_bot.git
 cd gif_caption_bot
 ```
-6. Создайте файл `.env` и заполните следующим образом:
+7. Создайте файл `.env` и заполните следующим образом:
    - Зарегистрируйте Telegram бота через [@BotFather](https://t.me/BotFather) и присвойте полученный токен переменной `BOT_TOKEN`.
    - Присвойте переменной `DATABASE_URL` ссылку на базу данных PostgreSQL следующего формата: `postgresql+psycopg://user:password@server/db`.
    - Пример `.env` файла:
@@ -70,7 +74,7 @@ cd gif_caption_bot
      BOT_TOKEN=0000000000:AaBbCcDdEeFfGgHhIiJjKkLlMmNn
      DATABASE_URL=postgresql+psycopg://postgres:passw0rd@localhost/gif_caption_bot_database
      ```
-7. Следующие команды установят требуемые библиотеки, создадут таблички в базе данных и запустят бота:
+8. Следующие команды установят требуемые библиотеки, создадут таблички в базе данных и запустят бота:
 ```bash
 poetry update                
 poetry run alembic upgrade head
@@ -148,7 +152,6 @@ Leaderboard
 [26] 002 — [ @AnotherUser9 ]
 ```
 
-Пример таблицы лидеров:
 ```yaml
 Leaderboard
 [1] 266 — [ @AlenKimov ]
