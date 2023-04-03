@@ -1,5 +1,6 @@
 # GIF Caption Bot
 Телеграм бот для добавления текста (подписи) на гифку.
+[ [Ссылка на бота](https://t.me/gif_caption_bot) ]
 
 ## Установка и запуск под Windows
 - Установите [Python 3.11](https://www.python.org/downloads/windows/). Не забудьте поставить галочку напротив "Add Python to PATH".
@@ -187,4 +188,4 @@ Corbel
 | _font_color_                   | Цвет текста                            |
 | _stroke_                       | Выполнять обводку текста?              |
 | _stroke_color_                 | Цвет обводки                           |
-| _position_                     | Позиция текста: сверху или снизу       |
+| _position_                     | Позиция текста                         |
