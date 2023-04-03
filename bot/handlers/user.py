@@ -10,12 +10,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from bot.config import DELAY, ALL_FONTS_LOWER, ALL_COLORS, ALL_POSITIONS
 from bot.utils import captioned_mp4
 from bot.definitions import TEMP_DIR
-from bot.middlewares import AddUserMiddleware
+from bot.middlewares import AddUserMiddleware, ChatActionMiddleware
 from bot.models import User
 from bot.handlers.message_texts import START_MESSAGE_TEXT, HELP_MESSAGE_TEXT
 
 router = Router()
 router.message.middleware(AddUserMiddleware())
+router.message.middleware(ChatActionMiddleware())
+router.edited_message.middleware(ChatActionMiddleware())
 router.edited_message.middleware(AddUserMiddleware())
 
 
@@ -145,7 +147,7 @@ async def create_gif_and_answer(message: Message, user: User, bot: Bot):
         os.remove(mp4_filepath)
 
 
-@router.message(Command('repeat', 'again', 'r'))
+@router.message(Command('repeat', 'again', 'r'), flags={"long_operation": "upload_video"})
 async def cmd_repeat(message: Message, user: User, session: AsyncSession, bot: Bot):
     if user.last_caption is None:
         return
@@ -159,8 +161,8 @@ async def animation_handler(message: Message, user: User, session: AsyncSession)
     await session.commit()
 
 
-@router.message(F.text)
-@router.edited_message(F.text)
+@router.message(F.text, flags={"long_operation": "upload_video"})
+@router.edited_message(F.text, flags={"long_operation": "upload_video"})
 async def text_handler(message: Message, user: User, session: AsyncSession, bot: Bot):
     user.last_caption = message.text
     await create_gif_and_answer(message, user, bot)
