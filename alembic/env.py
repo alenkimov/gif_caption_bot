@@ -5,7 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from bot.config import config as bot_config
+from bot.config import DATABASE_URL
 from bot.models import Base
 
 # this is the Alembic Config object, which provides
@@ -22,7 +22,7 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
-config.set_main_option('sqlalchemy.url', bot_config.DATABASE_URL)
+config.set_main_option('sqlalchemy.url', DATABASE_URL)
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
