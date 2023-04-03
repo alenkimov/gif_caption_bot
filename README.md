@@ -2,15 +2,14 @@
 Телеграм бот для добавления текста (подписи) на гифку.
 
 ## Установка и запуск под Windows
-1. Установите [Python 3.11](https://www.python.org/downloads/windows/). Не забудьте поставить галочку напротив "Add Python to PATH".
-2. Установите пакетный менеджер [Poetry](https://python-poetry.org/docs/).
-3. Установите [ImageMagick](https://imagemagick.org/script/download.php).
-4. [Скачайте](https://github.com/AlenKimov/gif_caption_bot/archive/refs/heads/main.zip) или склонируйте (если установлен [git](https://git-scm.com/download/win)) этот репозиторий, после чего перейдите в него:
+- Установите [Python 3.11](https://www.python.org/downloads/windows/). Не забудьте поставить галочку напротив "Add Python to PATH".
+- Установите пакетный менеджер [Poetry](https://python-poetry.org/docs/) и [ImageMagick](https://imagemagick.org/script/download.php).
+- [Скачайте](https://github.com/AlenKimov/gif_caption_bot/archive/refs/heads/main.zip) или склонируйте (если установлен [git](https://git-scm.com/download/win)) этот репозиторий, после чего перейдите в него:
 ```bash
 git clone https://github.com/AlenKimov/gif_caption_bot.git
 cd gif_caption_bot
 ```
-5. Создайте файл `.env` и заполните следующим образом:
+- Создайте файл `.env` и заполните следующим образом:
    - Зарегистрируйте Telegram бота через [@BotFather](https://t.me/BotFather) и присвойте полученный токен переменной `BOT_TOKEN`.
    - Присвойте переменной `DATABASE_URL` ссылку на базу данных PostgreSQL следующего формата: `postgresql+psycopg://user:password@server/db`.
    - Присвойте переменной `IMAGEMAGICK_BINARY` путь до исполняемого файла `magick.exe` ([подробнее об этом](https://moviepy-tburrows13.readthedocs.io/en/improve-docs/install.html#custom-paths-to-external-tools)).
@@ -20,7 +19,7 @@ cd gif_caption_bot
      DATABASE_URL=postgresql+psycopg://postgres:passw0rd@localhost/gif_caption_bot_database
      IMAGEMAGICK_BINARY=C:\Program Files\ImageMagick-7.1.1-Q16-HDRI\magick.exe
      ```
-6. Следующие команды установят требуемые библиотеки, создадут таблички в базе данных и запустят бота:
+- Следующие команды установят требуемые библиотеки, создадут таблички в базе данных и запустят бота:
 ```bash
 poetry update                
 poetry run alembic upgrade head
@@ -28,15 +27,12 @@ poetry run python -m bot
 ```
 
 ## Установка и запуск под Ubuntu
-1. Обновите систему, установите screen, [git](https://git-scm.com/download/linux) и [ImageMagick](https://imagemagick.org/script/install-source.php#linux):
+- Обновите систему, установите шрифты, [git](https://git-scm.com/download/linux) и [ImageMagick](https://imagemagick.org/script/install-source.php#linux):
 ```bash
 sudo apt update && sudo apt upgrade -y
-sudo apt install screen git imagemagick -y
-screen --version
-git --version
-
+sudo apt install screen git imagemagick ttf-mscorefonts-installer -y
 ```
-2. Для корректной работы ImageMagick ([подробнее](https://github.com/Zulko/moviepy/issues/401#issuecomment-278679961)) нужно отредактировать файл `/etc/ImageMagick-6/policy.xml`. Удалите следующую строку в конце файла:
+- Для корректной работы ImageMagick ([подробнее](https://github.com/Zulko/moviepy/issues/401#issuecomment-278679961)) нужно отредактировать файл `/etc/ImageMagick-6/policy.xml`. Удалите следующую строку в конце файла:
 ```xml
 <policy domain="path" rights="none" pattern="@*" />
 ```
@@ -44,29 +40,24 @@ git --version
 ```xml
 <!-- <policy domain="path" rights="none" pattern="@*" /> -->
 ```
-3. Установите шрифты:
-```bash
-sudo apt install ttf-mscorefonts-installer
-```
-4. Установите Python 3.11:
+- [Установите PostgreSQL и создайте базу данных](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-18-04-ru#1-postgresql).
+- Установите Python 3.11:
 ```bash
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt install python3.11 -y
 ln -s /usr/bin/python3.11 /usr/bin/python
-python --version
 ```
-5. Установите [Poetry](https://python-poetry.org/docs/):
+- Установите [Poetry](https://python-poetry.org/docs/):
 ```bash
 curl -sSL https://install.python-poetry.org | python -
 export PATH="/root/.local/bin:$PATH"
-poetry --version
 ```
-6. Склонируйте этот репозиторий, после чего перейдите в него:
+- Склонируйте этот репозиторий, после чего перейдите в него:
 ```bash
 git clone https://github.com/AlenKimov/gif_caption_bot.git
 cd gif_caption_bot
 ```
-7. Создайте файл `.env` и заполните следующим образом:
+- Создайте файл `.env` и заполните следующим образом:
    - Зарегистрируйте Telegram бота через [@BotFather](https://t.me/BotFather) и присвойте полученный токен переменной `BOT_TOKEN`.
    - Присвойте переменной `DATABASE_URL` ссылку на базу данных PostgreSQL следующего формата: `postgresql+psycopg://user:password@server/db`.
    - Пример `.env` файла:
@@ -74,7 +65,7 @@ cd gif_caption_bot
      BOT_TOKEN=0000000000:AaBbCcDdEeFfGgHhIiJjKkLlMmNn
      DATABASE_URL=postgresql+psycopg://postgres:passw0rd@localhost/gif_caption_bot_database
      ```
-8. Следующие команды установят требуемые библиотеки, создадут таблички в базе данных и запустят бота:
+- Следующие команды установят требуемые библиотеки, создадут таблички в базе данных и запустят бота:
 ```bash
 poetry update                
 poetry run alembic upgrade head
