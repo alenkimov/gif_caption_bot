@@ -24,6 +24,7 @@ class User(Base):
     animation_file_id: Mapped[str | None] = mapped_column(String(120))
     last_gif_created_at: Mapped[datetime | None]
     count_of_creations: Mapped[int] = mapped_column(default=0)
+    last_caption: Mapped[str | None]
     font: Mapped[str] = mapped_column(String(120), default=DEFAULT_FONT)
     font_size: Mapped[int] = mapped_column(SmallInteger, default=36)
     font_color: Mapped[str] = mapped_column(String(60), default='white')

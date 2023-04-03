@@ -113,20 +113,14 @@ async def cmd_position(message: Message, user: User, session: AsyncSession, posi
         await message.reply(f'Позиция текста установлена')
 
 
-@router.message(F.animation)
-async def animation_handler(message: Message, user: User, session: AsyncSession):
-    user.animation_file_id = message.animation.file_id
-    await session.commit()
-
-
-@router.message(F.text)
-@router.edited_message(F.text)
-async def text_handler(message: Message, user: User, session: AsyncSession, bot: Bot):
+async def create_gif_and_answer(message: Message, user: User, session: AsyncSession, bot: Bot):
     """
     Скачивает последнюю отправленную пользователем гифку и добавляет на нее текст этого сообщения.
 
     Подпись на гифку можно добавлять не чаще определенного времени (bot.config.DELAY).
     """
+    if user.animation_file_id is None:
+        return
     now = datetime.utcnow()
     delta = timedelta(seconds=DELAY)
     delay_ago = now - delta
@@ -147,6 +141,26 @@ async def text_handler(message: Message, user: User, session: AsyncSession, bot:
             'stroke_color': user.stroke_color,
             'position': user.position,
         }
-        with captioned_mp4(mp4_filepath, message.text, **kwargs) as watermarked_mp4_filename:
+        with captioned_mp4(mp4_filepath, user.last_caption, **kwargs) as watermarked_mp4_filename:
             await message.reply_animation(FSInputFile(watermarked_mp4_filename))
         os.remove(mp4_filepath)
+
+
+@router.message(Command('repeat', 'again', 'r'))
+async def cmd_repeat(message: Message, user: User, session: AsyncSession, bot: Bot):
+    if user.last_caption is None:
+        return
+    await create_gif_and_answer(message, user, session, bot)
+
+
+@router.message(F.animation)
+async def animation_handler(message: Message, user: User, session: AsyncSession):
+    user.animation_file_id = message.animation.file_id
+    await session.commit()
+
+
+@router.message(F.text)
+@router.edited_message(F.text)
+async def text_handler(message: Message, user: User, session: AsyncSession, bot: Bot):
+    user.last_caption = message.text
+    await create_gif_and_answer(message, user, session, bot)
