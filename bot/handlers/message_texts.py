@@ -1,6 +1,6 @@
 from aiogram import html
 
-from bot.config import ALL_COLORS
+from bot.config import ALL_COLORS, ALL_POSITIONS
 
 GITHUB_LINK = 'https://github.com/AlenKimov/gif_caption_bot'
 AUTHOR_LINK = 'https://t.me/AlenKimov'
@@ -30,9 +30,10 @@ HELP_MESSAGE_TEXT = f"""
 /font_color [color] — Устанавливает указанный цвет шрифта.
 /stroke — Вкл/Выкл обводку текста.
 /stroke_color [color] — Устанавливает указанный цвет обводки.
-/position — Меняет позицию текста на противоположную.
+/position [position] — Меняет позицию текста на противоположную.
 /transition — Вкл/Выкл автоматический перенос текста на новую строку.
 
-Доступные цвета [color]: {', '.join(ALL_COLORS)}.
-Размер шрифта [font_size] может быть в пределах от 1% до 100%.
+Доступные цвета: {', '.join(ALL_COLORS)}.
+Доступные позиции текста: {', '.join(ALL_POSITIONS)}.
+Размер шрифта может быть в пределах от 1% до 100%.
 """

@@ -7,7 +7,7 @@ from aiogram.filters import Command
 from aiogram.types import Message, FSInputFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.config import DELAY, ALL_FONTS_LOWER, ALL_COLORS
+from bot.config import DELAY, ALL_FONTS_LOWER, ALL_COLORS, ALL_POSITIONS
 from bot.utils import captioned_mp4
 from bot.definitions import TEMP_DIR
 from bot.middlewares import AddUserMiddleware
@@ -71,8 +71,9 @@ async def cmd_font_name(message: Message, user: User, session: AsyncSession, fon
 
 @router.message(Command('font_color', magic=F.args.cast(str).as_('color')))
 async def cmd_font_color(message: Message, user: User, session: AsyncSession, color: str):
-    if color.lower() not in ALL_COLORS:
-        await message.reply(f'Цвет не найден. Доступные цвета: {ALL_COLORS}')
+    color = color.lower()
+    if color not in ALL_COLORS:
+        await message.reply(f'Цвет не найден. Доступные цвета: {", ".join(ALL_COLORS)}.')
     else:
         user.font_color = color
         await session.commit()
@@ -92,22 +93,24 @@ async def cmd_stroke(message: Message, user: User, session: AsyncSession):
 
 @router.message(Command('stroke_color', magic=F.args.cast(str).as_('color')))
 async def cmd_stroke_color(message: Message, user: User, session: AsyncSession, color: str):
-    if color.lower() not in ALL_COLORS:
-        await message.reply(f'Цвет не найден. Доступные цвета: {ALL_COLORS}')
+    color = color.lower()
+    if color not in ALL_COLORS:
+        await message.reply(f'Цвет не найден. Доступные цвета: {", ".join(ALL_COLORS)}.')
     else:
         user.stroke_color = color
         await session.commit()
         await message.reply(f'Цвет обводки установлен')
 
 
-@router.message(Command('position'))
-async def cmd_position(message: Message, user: User, session: AsyncSession):
-    if user.position == 'bottom':
-        user.position = 'up'
+@router.message(Command('position', magic=F.args.cast(str).as_('position')))
+async def cmd_position(message: Message, user: User, session: AsyncSession, position: str):
+    position = position.lower()
+    if position not in ALL_POSITIONS:
+        await message.reply(f'Неизвестная позиция. Доступные позиции: {", ".join(ALL_POSITIONS)}.')
     else:
-        user.position = 'bottom'
-    await session.commit()
-    await message.reply(f'Позиция текста установлена: {user.position}')
+        user.position = position
+        await session.commit()
+        await message.reply(f'Позиция текста установлена')
 
 
 @router.message(Command('transition'))

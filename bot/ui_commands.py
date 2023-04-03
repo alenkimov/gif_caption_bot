@@ -14,7 +14,7 @@ async def set_ui_commands(bot: Bot):
         BotCommand(command="leaderboard", description="Таблица лидеров"),
         BotCommand(command="font", description="Список доступных шрифтов, установка шрифта и его размера"),
         BotCommand(command="font_color", description="Установка цвета шрифта."),
-        BotCommand(command="position", description="Смена позиции текста"),
+        BotCommand(command="position", description="Установка позиции текста"),
         BotCommand(command="stroke", description="Вкл/Выкл обводку."),
         BotCommand(command="stroke_color", description="Установка цвета обводки."),
         BotCommand(command="transition", description="Вкл/Выкл перенос текста на новую строку"),

@@ -27,3 +27,4 @@ else:
 
 DELAY = int(os.getenv('DELAY', 30))
 ALL_COLORS = ['white', 'black']
+ALL_POSITIONS = ['bottom', 'center', 'top']
