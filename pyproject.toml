@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gif-caption-bot"
-version = "0.2.5"
+version = "0.2.6"
 description = "Telegram bot to add a caption to a gif."
 authors = ["Alen <alen.kimov@gmail.com>"]
 readme = "README.md"

@@ -28,3 +28,4 @@ else:
 DELAY = int(os.getenv('DELAY', 30))
 ALL_COLORS = ['white', 'black']
 ALL_POSITIONS = ['bottom', 'center', 'top']
+MAX_WORKERS = 10  # Максимальное количество процессов для обработки видео

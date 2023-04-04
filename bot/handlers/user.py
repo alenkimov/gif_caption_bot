@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+from contextlib import asynccontextmanager
+from pathlib import Path
 import secrets
 import os
 
@@ -8,7 +10,7 @@ from aiogram.types import Message, FSInputFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.config import DELAY, ALL_FONTS_LOWER, ALL_COLORS, ALL_POSITIONS
-from bot.utils import captioned_mp4
+from bot.utils import captioned_mp4 as _captioned_mp4
 from bot.definitions import TEMP_DIR
 from bot.middlewares import AddUserMiddleware, ChatActionMiddleware
 from bot.models import User
@@ -115,7 +117,24 @@ async def cmd_position(message: Message, user: User, session: AsyncSession, posi
         await message.reply(f'Позиция текста установлена')
 
 
-async def create_gif_and_answer(message: Message, user: User, bot: Bot):
+@asynccontextmanager
+async def captioned_mp4(user: User, bot: Bot) -> Path:
+    mp4_filepath = TEMP_DIR / f'{user.username}-{secrets.token_urlsafe(8)}.mp4'
+    await bot.download(user.animation_file_id, destination=mp4_filepath)
+    kwargs = {
+        'font': user.font,
+        'font_size': user.font_size,
+        'font_color': user.font_color,
+        'stroke': user.stroke,
+        'stroke_color': user.stroke_color,
+        'position': user.position,
+    }
+    async with _captioned_mp4(mp4_filepath, user.last_caption, **kwargs) as captioned_mp4_filename:
+        yield captioned_mp4_filename
+    os.remove(mp4_filepath)
+
+
+async def caption_mp4_and_answer(message: Message, user: User, bot: Bot):
     """
     Скачивает последнюю отправленную пользователем гифку и добавляет на нее текст этого сообщения.
 
@@ -130,28 +149,17 @@ async def create_gif_and_answer(message: Message, user: User, bot: Bot):
         seconds_left = ((user.last_gif_created_at + delta) - now).seconds
         await message.reply(f'Wait {seconds_left} seconds!')
     else:
+        async with captioned_mp4(user, bot) as captioned_mp4_filename:
+            await message.reply_animation(FSInputFile(captioned_mp4_filename))
         user.last_gif_created_at = now
         user.count_of_creations += 1
-        mp4_filepath = TEMP_DIR / f'{user.username}-{secrets.token_urlsafe(8)}.mp4'
-        await bot.download(user.animation_file_id, destination=mp4_filepath)
-        kwargs = {
-            'font': user.font,
-            'font_size': user.font_size,
-            'font_color': user.font_color,
-            'stroke': user.stroke,
-            'stroke_color': user.stroke_color,
-            'position': user.position,
-        }
-        with captioned_mp4(mp4_filepath, user.last_caption, **kwargs) as watermarked_mp4_filename:
-            await message.reply_animation(FSInputFile(watermarked_mp4_filename))
-        os.remove(mp4_filepath)
 
 
 @router.message(Command('repeat', 'again', 'r'), flags={"long_operation": "upload_video"})
 async def cmd_repeat(message: Message, user: User, session: AsyncSession, bot: Bot):
     if user.last_caption is None:
         return
-    await create_gif_and_answer(message, user, bot)
+    await caption_mp4_and_answer(message, user, bot)
     await session.commit()
 
 
@@ -165,5 +173,5 @@ async def animation_handler(message: Message, user: User, session: AsyncSession)
 @router.edited_message(F.text, flags={"long_operation": "upload_video"})
 async def text_handler(message: Message, user: User, session: AsyncSession, bot: Bot):
     user.last_caption = message.text
-    await create_gif_and_answer(message, user, bot)
+    await caption_mp4_and_answer(message, user, bot)
     await session.commit()
