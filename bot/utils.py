@@ -29,6 +29,8 @@ def add_text_to_mp4(
     Добавляет текст на видео.
     """
     mp4 = VideoFileClip(input_path.as_posix())
+    if mp4.audio:
+        mp4 = mp4.without_audio()
     text_clip_params = {
         'txt': text,
         'font': font,
