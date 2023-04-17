@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gif-caption-bot"
-version = "0.2.6"
+version = "0.2.7"
 description = "Telegram bot to add a caption to a gif."
 authors = ["Alen <alen.kimov@gmail.com>"]
 readme = "README.md"
@@ -10,11 +10,11 @@ packages = [{include = "gif_caption_bot"}]
 python = "^3.11"
 loguru = "^0.6.0"
 aiogram = "3.0.0b7"
-python-dotenv = "^1.0.0"
 moviepy = "^1.0.3"
 sqlalchemy = "^2.0.8"
 alembic = "^1.10.2"
 psycopg = {extras = ["binary"], version = "^3.1.8"}
+python-decouple = "^3.8"
 
 
 [build-system]

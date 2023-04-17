@@ -10,16 +10,7 @@
 git clone https://github.com/AlenKimov/gif_caption_bot.git
 cd gif_caption_bot
 ```
-- Создайте файл `.env` и заполните следующим образом:
-   - Зарегистрируйте Telegram бота через [@BotFather](https://t.me/BotFather) и присвойте полученный токен переменной `BOT_TOKEN`.
-   - Присвойте переменной `DATABASE_URL` ссылку на базу данных PostgreSQL следующего формата: `postgresql+psycopg://user:password@server/db`.
-   - Присвойте переменной `IMAGEMAGICK_BINARY` путь до исполняемого файла `magick.exe` ([подробнее об этом](https://moviepy-tburrows13.readthedocs.io/en/improve-docs/install.html#custom-paths-to-external-tools)).
-   - Пример `.env` файла:
-     ```
-     BOT_TOKEN=0000000000:AaBbCcDdEeFfGgHhIiJjKkLlMmNn
-     DATABASE_URL=postgresql+psycopg://postgres:passw0rd@localhost/gif_caption_bot_database
-     IMAGEMAGICK_BINARY=C:\Program Files\ImageMagick-7.1.1-Q16-HDRI\magick.exe
-     ```
+- Создайте файл `.env` и заполните согласно инструкции, описанной в разделе *Наполнение `.env` файла*.
 - Следующие команды установят требуемые библиотеки, создадут таблички в базе данных и запустят бота:
 ```bash
 poetry update                
@@ -58,20 +49,57 @@ export PATH="/root/.local/bin:$PATH"
 git clone https://github.com/AlenKimov/gif_caption_bot.git
 cd gif_caption_bot
 ```
-- Создайте файл `.env` и заполните следующим образом:
-   - Зарегистрируйте Telegram бота через [@BotFather](https://t.me/BotFather) и присвойте полученный токен переменной `BOT_TOKEN`.
-   - Присвойте переменной `DATABASE_URL` ссылку на базу данных PostgreSQL следующего формата: `postgresql+psycopg://user:password@server/db`.
-   - Пример `.env` файла:
-     ```
-     BOT_TOKEN=0000000000:AaBbCcDdEeFfGgHhIiJjKkLlMmNn
-     DATABASE_URL=postgresql+psycopg://postgres:passw0rd@localhost/gif_caption_bot_database
-     ```
+- Создайте файл `.env` и заполните согласно инструкции, описанной в разделе *Наполнение `.env` файла*.
 - Следующие команды установят требуемые библиотеки, создадут таблички в базе данных и запустят бота:
 ```bash
 poetry update                
 poetry run alembic upgrade head
 poetry run python -m bot
 ```
+
+## Наполнение `.env` файла
+> Если значение переменной не задано, то будет задано значение по умолчанию, если такое имеется.
+> Переменные без значения по умолчанию должны быть заданы обязательно.
+
+- Зарегистрируйте Telegram бота через [@BotFather](https://t.me/BotFather) и присвойте переменной `BOT_TOKEN` 
+  полученный токен.
+- Webhook:
+  - `DOMAIN`=https://3he5-128-78-1-120.ngrok-free.app
+  - `WEBHOOK_BASE_PATH`. По умолчанию: webhook
+  - `WEB_SERVER_HOST`. Хост по умолчанию: localhost
+  - `WEB_SERVER_PORT`. Порт по умолчанию: 8080
+- Задайте переменные для доступа к базе данных PostgreSQL: 
+  - `POSTGRES_HOST`. Хост по умолчанию: localhost
+  - `POSTGRES_PORT`. Порт по умолчанию: 5432
+  - `POSTGRES_USER`. Имя пользователя по умолчанию: postgres
+  - `POSTGRES_PASSWORD`. Пароль по умолчанию является пустым.
+  - `POSTGRES_DB`. Название базы данных по умолчанию: gif_caption_bot
+- Присвойте переменной `DELAY` желаемую задержку на запросы на создание анимации в секундах. 
+Задержка по умолчанию: 30 секунд.
+- Присвойте переменной `MAX_WORKERS` максимальное количество процессов для обработки видео.
+- (Только для Windows) Присвойте переменной `IMAGEMAGICK_BINARY` путь до исполняемого файла `magick.exe` ([подробнее об 
+  этом](https://moviepy-tburrows13.readthedocs.io/en/improve-docs/install.html#custom-paths-to-external-tools)).
+
+Пример `.env` файла:
+  ```
+  BOT_TOKEN=903276830:AAFgbkhvzmQJjc1286qDdtRZ8C7aA_GzDHA
+  
+  DOMAIN=https://3he5-128-78-1-120.ngrok-free.app
+  WEBHOOK_BASE_PATH=webhook
+  WEB_SERVER_HOST=localhost
+  WEB_SERVER_PORT=8080
+  
+  POSTGRES_HOST=localhost
+  POSTGRES_PORT=5432
+  POSTGRES_USER=postgres
+  POSTGRES_PASSWORD=passw0rd
+  POSTGRES_DB=gif_caption_bot
+  
+  DELAY = 30
+  MAX_WORKERS = 10
+  
+  IMAGEMAGICK_BINARY=C:\Program Files\ImageMagick-7.1.1-Q16-HDRI\magick.exe
+  ```
 
 ## О боте
 Чтобы добавить подпись на гифку, нужно отправить боту гифку, затем нужно отправить саму подпись. 

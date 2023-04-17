@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.config import DELAY, ALL_FONTS_LOWER, ALL_COLORS, ALL_POSITIONS
 from bot.utils import captioned_mp4 as _captioned_mp4
-from bot.definitions import TEMP_DIR
+from bot.paths import TEMP_DIR
 from bot.middlewares import AddUserMiddleware, ChatActionMiddleware
 from bot.models import User
 from bot.handlers.message_texts import START_MESSAGE_TEXT, HELP_MESSAGE_TEXT

@@ -4,7 +4,7 @@ import asyncio
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
-from bot.config import DATABASE_URL
+from bot.config import POSTGRES_URI
 
 
 # Во избежание этой ошибки:
@@ -16,5 +16,5 @@ from bot.config import DATABASE_URL
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
-async_engine = create_async_engine(DATABASE_URL, echo=False)
+async_engine = create_async_engine(POSTGRES_URI, echo=False)
 AsyncSessionmaker = async_sessionmaker(bind=async_engine, expire_on_commit=False)
