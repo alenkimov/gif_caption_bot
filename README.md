@@ -25,7 +25,16 @@ sudo apt install screen git imagemagick ttf-mscorefonts-installer -y
 ```xml
 <!-- <policy domain="path" rights="none" pattern="@*" /> -->
 ```
-- [Установите PostgreSQL и создайте базу данных](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-18-04-ru#1-postgresql).
+- Установите PostgreSQL, задайте пароль учетной записи "postgres" и создайте базу данных (лучше делать это в новом терминале):
+```bash
+sudo apt install postgresql postgresql-contrib -y
+sudo passwd postgres
+sudo -i -u postgres
+createdb gif_caption_bot
+psql
+\password
+\q
+```
 - Установите Python 3.11:
 ```bash
 sudo add-apt-repository ppa:deadsnakes/ppa
@@ -49,8 +58,8 @@ cd gif_caption_bot
 
 - Зарегистрируйте Telegram бота через [@BotFather](https://t.me/BotFather) и присвойте переменной `BOT_TOKEN` 
   полученный токен.
-- Webhook:
-  - `DOMAIN`.
+- (Только при использовании webhook) Задайте следующие переменные:
+  - `DOMAIN`. По умолчанию: example.com
   - `WEBHOOK_BASE_PATH`. По умолчанию: webhook
   - `WEB_SERVER_HOST`. Хост по умолчанию: localhost
   - `WEB_SERVER_PORT`. Порт по умолчанию: 8080
@@ -71,7 +80,6 @@ cd gif_caption_bot
   BOT_TOKEN=903276830:AAFgbkhvzmQJjc1286qDdtRZ8C7aA_GzDHA
   
   DOMAIN=https://3he5-128-78-1-120.ngrok-free.app
-  WEBHOOK_BASE_PATH=webhook
   WEB_SERVER_HOST=localhost
   WEB_SERVER_PORT=8080
   
