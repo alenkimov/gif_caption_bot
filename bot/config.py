@@ -11,31 +11,29 @@ env = Config(RepositoryEnv(DOT_ENV_FILEPATH))
 BOT_TOKEN = env('BOT_TOKEN')
 
 # Webhook
-DOMAIN: str = env('DOMAIN')
-DOMAIN = DOMAIN.rstrip('/')
-DOMAIN = DOMAIN.lstrip('https://')
-SECRET_KEY = secrets.token_urlsafe(48)
+DOMAIN            = env('DOMAIN', default='example.com')
+SECRET_KEY        = secrets.token_urlsafe(48)
 WEBHOOK_BASE_PATH = env('WEBHOOK_BASE_PATH', default='/webhook')
-WEBHOOK_PATH = f'{WEBHOOK_BASE_PATH}/{SECRET_KEY}'
-WEBHOOK_URL = f'https://{DOMAIN}{WEBHOOK_PATH}'
-WEB_SERVER_HOST = env('WEB_SERVER_HOST', default='localhost')
-WEB_SERVER_PORT = env('BOT_PUBLIC_PORT', default=8080, cast=int)
-print(WEBHOOK_URL)
+WEBHOOK_PATH      = f'{WEBHOOK_BASE_PATH}/{SECRET_KEY}'
+WEBHOOK_URL       = f'https://{DOMAIN}{WEBHOOK_PATH}'
+WEB_SERVER_HOST   = env('WEB_SERVER_HOST', default='localhost')
+WEB_SERVER_PORT   = env('BOT_PUBLIC_PORT', default=8080, cast=int)
 
 # Доступ к базе данных PostgreSQL
-POSTGRES_HOST = env('POSTGRES_HOST', default='localhost')
-POSTGRES_PORT = env('POSTGRES_PORT', default=5432, cast=int)
-POSTGRES_USER = env('POSTGRES_USER', default='postgres')
-POSTGRES_PASSWORD = env('POSTGRES_PASSWORD', default='')
-POSTGRES_DB = env('POSTGRES_DB', default='gif_caption_bot')
-POSTGRES_URI = f'postgresql+psycopg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}'
+POSTGRES_HOST     = env('POSTGRES_HOST', default='localhost')
+POSTGRES_PORT     = env('POSTGRES_PORT', default=5432, cast=int)
+POSTGRES_USER     = env('POSTGRES_USER', default='postgres')
+POSTGRES_PASSWORD = env('POSTGRES_PASSWORD', default='postgres')
+POSTGRES_DB       = env('POSTGRES_DB', default='gif_caption_bot')
+POSTGRES_URI      = f'postgresql+psycopg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}'
 
 # Другие настройки
-DELAY = env('DELAY', default=30, cast=int)  # Задержка на создание анимации для пользователя
-MAX_WORKERS = env('MAX_WORKERS', default=10, cast=int)  # Максимальное количество процессов для обработки видео
+DELAY         = env('DELAY', default=30, cast=int)  # Задержка на создание анимации для пользователя
+MAX_WORKERS   = env('MAX_WORKERS', default=10, cast=int)  # Максимальное количество процессов для обработки видео
+LOGGING_LEVEL = env('LOGGING_LEVEL', default='DEBUG')
 
 # -- moviepy
-ALL_COLORS = ['white', 'black']
+ALL_COLORS    = ['white', 'black']
 ALL_POSITIONS = ['bottom', 'center', 'top']
 
 # For linux users, 'convert' should be fine.

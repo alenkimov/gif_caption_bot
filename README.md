@@ -2,7 +2,7 @@
 Телеграм бот для добавления текста (подписи) на гифку.
 [ [Ссылка на бота](https://t.me/gif_caption_bot) ]
 
-## Установка и запуск под Windows
+## Подготовка к запуску под Windows
 - Установите [Python 3.11](https://www.python.org/downloads/windows/). Не забудьте поставить галочку напротив "Add Python to PATH".
 - Установите пакетный менеджер [Poetry](https://python-poetry.org/docs/) и [ImageMagick](https://imagemagick.org/script/download.php).
 - [Скачайте](https://github.com/AlenKimov/gif_caption_bot/archive/refs/heads/main.zip) или склонируйте (если установлен [git](https://git-scm.com/download/win)) этот репозиторий, после чего перейдите в него:
@@ -10,15 +10,8 @@
 git clone https://github.com/AlenKimov/gif_caption_bot.git
 cd gif_caption_bot
 ```
-- Создайте файл `.env` и заполните согласно инструкции, описанной в разделе *Наполнение `.env` файла*.
-- Следующие команды установят требуемые библиотеки, создадут таблички в базе данных и запустят бота:
-```bash
-poetry update                
-poetry run alembic upgrade head
-poetry run python -m bot
-```
 
-## Установка и запуск под Ubuntu
+## Подготовка к запуску под Ubuntu
 - Обновите систему, установите шрифты, [git](https://git-scm.com/download/linux) и [ImageMagick](https://imagemagick.org/script/install-source.php#linux):
 ```bash
 sudo apt update && sudo apt upgrade -y
@@ -49,13 +42,6 @@ export PATH="/root/.local/bin:$PATH"
 git clone https://github.com/AlenKimov/gif_caption_bot.git
 cd gif_caption_bot
 ```
-- Создайте файл `.env` и заполните согласно инструкции, описанной в разделе *Наполнение `.env` файла*.
-- Следующие команды установят требуемые библиотеки, создадут таблички в базе данных и запустят бота:
-```bash
-poetry update                
-poetry run alembic upgrade head
-poetry run python -m bot
-```
 
 ## Наполнение `.env` файла
 > Если значение переменной не задано, то будет задано значение по умолчанию, если такое имеется.
@@ -64,7 +50,7 @@ poetry run python -m bot
 - Зарегистрируйте Telegram бота через [@BotFather](https://t.me/BotFather) и присвойте переменной `BOT_TOKEN` 
   полученный токен.
 - Webhook:
-  - `DOMAIN`=https://3he5-128-78-1-120.ngrok-free.app
+  - `DOMAIN`.
   - `WEBHOOK_BASE_PATH`. По умолчанию: webhook
   - `WEB_SERVER_HOST`. Хост по умолчанию: localhost
   - `WEB_SERVER_PORT`. Порт по умолчанию: 8080
@@ -72,7 +58,7 @@ poetry run python -m bot
   - `POSTGRES_HOST`. Хост по умолчанию: localhost
   - `POSTGRES_PORT`. Порт по умолчанию: 5432
   - `POSTGRES_USER`. Имя пользователя по умолчанию: postgres
-  - `POSTGRES_PASSWORD`. Пароль по умолчанию является пустым.
+  - `POSTGRES_PASSWORD`. Пароль по умолчанию: postgres
   - `POSTGRES_DB`. Название базы данных по умолчанию: gif_caption_bot
 - Присвойте переменной `DELAY` желаемую задержку на запросы на создание анимации в секундах. 
 Задержка по умолчанию: 30 секунд.
@@ -92,23 +78,32 @@ poetry run python -m bot
   POSTGRES_HOST=localhost
   POSTGRES_PORT=5432
   POSTGRES_USER=postgres
-  POSTGRES_PASSWORD=passw0rd
+  POSTGRES_PASSWORD=postgres
   POSTGRES_DB=gif_caption_bot
   
-  DELAY = 30
-  MAX_WORKERS = 10
+  DELAY=30
+  MAX_WORKERS=10
   
   IMAGEMAGICK_BINARY=C:\Program Files\ImageMagick-7.1.1-Q16-HDRI\magick.exe
   ```
 
+## Запуска бота
+- Следующие команды установят требуемые библиотеки, создадут таблички в базе данных:
+```bash
+poetry update                
+poetry run alembic upgrade head
+```
+- Запуск бота (поллинг):
+```bash
+poetry run python start.py polling --skip-updates
+```
+- Запуск бота (вебхук):
+```bash
+poetry run python start.py webhook
+```
+
 ## О боте
-Чтобы добавить подпись на гифку, нужно отправить боту гифку, затем нужно отправить саму подпись. 
-Подпись можно отправлять не чаще определенного времени. По умолчанию оно равно 30 секундам. 
-Это время изменить в переменных окружениях (`.env`), задав его переменной `DELAY`. Например:
-```
-DELAY=10
-```
-Изменения вступят в силу после перезагрузки бота.
+Чтобы добавить подпись на гифку, нужно отправить боту гифку, затем нужно отправить саму подпись.
 
 ### Команды бота
 - `/start` — Выводит приветственное сообщение с описанием возможностей бота.

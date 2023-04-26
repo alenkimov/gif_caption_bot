@@ -1,23 +1,22 @@
 """Настройка логера Loguru"""
-from datetime import datetime
 import logging
 import sys
 
 from loguru import logger
 
+from bot.config import LOGGING_LEVEL
 
-DEBUG = True
 
 CONSOLE_LOG_FORMAT = "<white>{time:HH:mm:ss}</white> | <level>{level: <8}</level> | <white>{message}</white>"
 
 
 class InterceptHandler(logging.Handler):
     LEVELS_MAP = {
-        logging.CRITICAL: "CRITICAL",
-        logging.ERROR:    "ERROR",
-        logging.WARNING:  "WARNING",
-        logging.INFO:     "INFO",
-        logging.DEBUG:    "DEBUG",
+        logging.CRITICAL: 'CRITICAL',
+        logging.ERROR: 'ERROR',
+        logging.WARNING: 'WARNING',
+        logging.INFO: 'INFO',
+        logging.DEBUG: 'DEBUG',
     }
 
     def _get_level(self, record):
@@ -28,10 +27,11 @@ class InterceptHandler(logging.Handler):
         logger_opt.log(self._get_level(record), record.getMessage())
 
 
-def setup(debug: bool):
-    logger.remove()
+def setup(level='DEBUG'):
     logging.basicConfig(handlers=[InterceptHandler()], level=logging.INFO)
-    logger.add(sys.stderr, colorize=True, format=CONSOLE_LOG_FORMAT, level='DEBUG' if debug else 'INFO')
+    logger.remove()
+    logger.add(sys.stderr, colorize=True, format=CONSOLE_LOG_FORMAT, level=level)
+    logger.disable('sqlalchemy.engine.base')
 
 
-setup(DEBUG)
+setup(LOGGING_LEVEL)
