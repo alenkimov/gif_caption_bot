@@ -59,7 +59,7 @@ cd gif_caption_bot
 - Зарегистрируйте Telegram бота через [@BotFather](https://t.me/BotFather) и присвойте переменной `BOT_TOKEN` 
   полученный токен.
 - (Только при использовании webhook) Задайте следующие переменные:
-  - `DOMAIN`. По умолчанию: example.com
+  - `DOMAIN`. Домен по умолчанию: example.com
   - `WEBHOOK_BASE_PATH`. По умолчанию: webhook
   - `WEB_SERVER_HOST`. Хост по умолчанию: localhost
   - `WEB_SERVER_PORT`. Порт по умолчанию: 8080
@@ -71,7 +71,7 @@ cd gif_caption_bot
   - `POSTGRES_DB`. Название базы данных по умолчанию: gif_caption_bot
 - Присвойте переменной `DELAY` желаемую задержку на запросы на создание анимации в секундах. 
 Задержка по умолчанию: 30 секунд.
-- Присвойте переменной `MAX_WORKERS` максимальное количество процессов для обработки видео.
+- Присвойте переменной `MAX_WORKERS` максимальное количество процессов для обработки видео. По умолчанию: 10.
 - (Только для Windows) Присвойте переменной `IMAGEMAGICK_BINARY` путь до исполняемого файла `magick.exe` ([подробнее об 
   этом](https://moviepy-tburrows13.readthedocs.io/en/improve-docs/install.html#custom-paths-to-external-tools)).
 
@@ -96,7 +96,7 @@ cd gif_caption_bot
   ```
 
 ## Запуска бота
-- Следующие команды установят требуемые библиотеки, создадут таблички в базе данных:
+- Следующие команды установят требуемые библиотеки и создадут таблички в базе данных:
 ```bash
 poetry update                
 poetry run alembic upgrade head
